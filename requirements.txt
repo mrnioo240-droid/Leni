@@ -4,3 +4,4 @@ aiohttp>=3.9.0
 aiofiles>=23.2.0
 emoji>=2.2.0
 urllib3>=2.0.0
+Flask>=2.0.0

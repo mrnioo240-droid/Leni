@@ -33,7 +33,7 @@ except ImportError:
     def live(): pass
 
 # ========== CONFIGURATION ==========
-TOKEN = os.getenv("BOT_TOKEN", "7934975060:AAFUnh7ljkLE5CAjwj7jvYt3cW0CZT9Y7yM")
+TOKEN = os.getenv("BOT_TOKEN", "8656224854:AAHmT_-IR5hIlaijF29_xH8-82feHUKypok")
 if not TOKEN:
     raise ValueError("BOT_TOKEN environment variable not set!")
 
@@ -42,7 +42,7 @@ if not ADMIN_IDS:
     ADMIN_IDS = [6725209689]
 
 WATERMARK = "⚡ Made by @darkhuchannel"
-MAX_WORKERS = 10
+MAX_WORKERS = 15
 BATCH_SIZE = 5
 BATCH_DELAY = 0.5
 dot_length = 10

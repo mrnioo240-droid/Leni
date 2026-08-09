@@ -93,7 +93,7 @@ feedback_broadcast_interval = 0
 
 
 START_VIDEO_PATH = os.getenv("START_VIDEO_PATH", "welcome.mp4")
-START_IMAGE_PATH = /opt/render/project/src/welcome.jpg
+START_IMAGE_PATH = "/opt/render/project/src/welcome.jpg"
 
 if os.path.exists(SPLIT_TEMP_DIR):
     shutil.rmtree(SPLIT_TEMP_DIR)

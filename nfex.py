@@ -2258,14 +2258,18 @@ def format_output(token: str, info: Dict, netflix_id: str) -> str:
     member_since = format_member_since(info.get('memberSince'))
     login_link = f"https://netflix.com/?nftoken={token}" if token else "N/A"
 
+    # ---- ESCAPE the dynamic parts ----
+    safe_netflix_id = html_mod.escape(netflix_id)
+    safe_login_link = html_mod.escape(login_link)
+
     return f"""
 📺 Netflix Bot 📺
 ━━━━━━━━━━━━━━━━━━━━━━━━━
 🆔 NetflixId:
-<code>{netflix_id}</code>
+<code>{safe_netflix_id}</code>
 
 🔑 Login Link:
-<code>{login_link}</code>
+<code>{safe_login_link}</code>
 
 📧 Email: {email}
 💳 Plan: {plan}

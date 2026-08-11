@@ -145,34 +145,47 @@ def premium_emoji(text: str) -> str:
     if not text:
         return text
 
-    # Protect <code> blocks
+    # 1. Protect all HTML tags (including <b>, <i>, <a>, etc.)
+    tag_placeholders = {}
+    def protect_html(match):
+        idx = len(tag_placeholders)
+        placeholder = f"__HTML_{idx}__"
+        tag_placeholders[placeholder] = match.group(0)
+        return placeholder
+
+    # Protect <code> blocks first (they may contain other HTML)
     code_blocks = []
-    def repl(match):
+    def protect_code(match):
         code_blocks.append(match.group(0))
         return f"__CODE_{len(code_blocks)-1}__"
-    text = re.sub(r'<code>.*?</code>', repl, text, flags=re.DOTALL)
+    text = re.sub(r'<code>.*?</code>', protect_code, text, flags=re.DOTALL)
 
-    # Escape HTML
+    # Protect all remaining HTML tags
+    text = re.sub(r'<[^>]+>', protect_html, text)
+
+    # 2. Escape the text (placeholders are safe)
     text = html_mod.escape(text)
 
-    # Find emojis using the library
+    # 3. Replace emojis with <tg-emoji> tags
     emojis = emoji.emoji_list(text)
     new_text = ""
     last_end = 0
 
     for e in emojis:
-        # Try attribute access first (modern emoji library)
-        if hasattr(e, 'emoji'):
-            emoji_char = e.emoji
-            start = e.start
-            end = e.end
-        else:
-            # Fallback for dict-like objects
-            emoji_char = e.get('emoji') or e.get('emoji_char')
-            start = e.get('start') or e.get('match_start')
-            end = e.get('end') or e.get('match_end')
+        # Handle both dict and attribute access (different emoji library versions)
+        try:
+            if hasattr(e, 'emoji'):
+                emoji_char = e.emoji
+                start = e.start
+                end = e.end
+            else:
+                emoji_char = e.get('emoji') or e.get('emoji_char')
+                start = e.get('start') or e.get('match_start')
+                end = e.get('end') or e.get('match_end')
             if not emoji_char:
                 continue
+        except:
+            continue
 
         new_text += text[last_end:start]
         emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
@@ -181,7 +194,9 @@ def premium_emoji(text: str) -> str:
 
     new_text += text[last_end:]
 
-    # Restore <code> blocks
+    # 4. Restore protected HTML tags and code blocks
+    for placeholder, original in tag_placeholders.items():
+        new_text = new_text.replace(placeholder, original)
     for i, block in enumerate(code_blocks):
         new_text = new_text.replace(f"__CODE_{i}__", block)
 

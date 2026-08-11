@@ -4660,31 +4660,34 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     import asyncio, sys, traceback
 
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
+    # Ensure files exist (moved inside the while loop so we re-check after crashes)
     for f in [USERS_FILE, KEYS_FILE, USED_FILE, BASIC_FILE, STANDARD_FILE, PREMIUM_FILE]:
         if not os.path.exists(f):
             with open(f, 'w') as _: pass
-
-    print("=" * 50)
-    print("  NF Bot - Final Ultimate Edition")
-    print("=" * 50)
-    print(f"  Pool: {loop.run_until_complete(get_pool_counts())}")
-    print(f"  Proxies: {len(proxy_manager.proxies)}")
-    print(f"  {WATERMARK}")
-    print("=" * 50)
-    print("🔄 Auto-restart enabled – will restart on crash.")
 
     feedback_task = None
 
     while True:
         try:
+            # Get or create a fresh event loop
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+
+            print("=" * 50)
+            print("  NF Bot - Final Ultimate Edition")
+            print("=" * 50)
+            print(f"  Pool: {loop.run_until_complete(get_pool_counts())}")
+            print(f"  Proxies: {len(proxy_manager.proxies)}")
+            print(f"  {WATERMARK}")
+            print("=" * 50)
+            print("🔄 Auto-restart enabled – will restart on crash.")
+
             app = ApplicationBuilder().token(TOKEN).build()
 
+            # --- all handlers (your existing code) ---
             app.add_handler(CommandHandler("start", start))
             app.add_handler(CommandHandler("help", help_command))
             app.add_handler(CommandHandler("link", link_command))
@@ -4726,8 +4729,14 @@ if __name__ == "__main__":
 
             app.add_error_handler(error_handler)
 
+            # Safely cancel previous feedback task (if any)
             if feedback_task is not None:
-                feedback_task.cancel()
+                try:
+                    feedback_task.cancel()
+                except RuntimeError:
+                    pass  # loop already closed, ignore
+
+            # Create background tasks (using the current loop)
             feedback_task = loop.create_task(feedback_timeout_checker(app.bot))
             loop.create_task(feedback_broadcast_loop(app.bot))
             loop.create_task(periodic_proxy_check())
@@ -4747,4 +4756,4 @@ if __name__ == "__main__":
             traceback.print_exc()
             print("⏳ Restarting in 5 seconds...")
             time.sleep(5)
-            continue
+            # Continue the while loop – it will recreate the event loop and app

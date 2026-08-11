@@ -141,11 +141,18 @@ SPECIAL_EMOJI_IDS = {
 }
 ALL_PREMIUM_IDS = list(SPECIAL_EMOJI_IDS.values())
 
+def is_country_flag(emoji_char: str) -> bool:
+    """Check if a single‑character string is a country flag (two regional indicators)."""
+    if len(emoji_char) != 2:
+        return False
+    cp1, cp2 = ord(emoji_char[0]), ord(emoji_char[1])
+    return (0x1F1E6 <= cp1 <= 0x1F1FF) and (0x1F1E6 <= cp2 <= 0x1F1FF)
+
 def premium_emoji(text: str) -> str:
     if not text:
         return text
 
-    # 1. Protect all HTML tags (including <b>, <i>, <a>, etc.)
+    # Protect HTML tags and <code> blocks
     tag_placeholders = {}
     def protect_html(match):
         idx = len(tag_placeholders)
@@ -153,26 +160,22 @@ def premium_emoji(text: str) -> str:
         tag_placeholders[placeholder] = match.group(0)
         return placeholder
 
-    # Protect <code> blocks first (they may contain other HTML)
     code_blocks = []
     def protect_code(match):
         code_blocks.append(match.group(0))
         return f"__CODE_{len(code_blocks)-1}__"
     text = re.sub(r'<code>.*?</code>', protect_code, text, flags=re.DOTALL)
-
-    # Protect all remaining HTML tags
     text = re.sub(r'<[^>]+>', protect_html, text)
 
-    # 2. Escape the text (placeholders are safe)
+    # Escape the text (placeholders are safe)
     text = html_mod.escape(text)
 
-    # 3. Replace emojis with <tg-emoji> tags
+    # Find all emojis using the emoji library
     emojis = emoji.emoji_list(text)
     new_text = ""
     last_end = 0
 
     for e in emojis:
-        # Handle both dict and attribute access (different emoji library versions)
         try:
             if hasattr(e, 'emoji'):
                 emoji_char = e.emoji
@@ -188,13 +191,20 @@ def premium_emoji(text: str) -> str:
             continue
 
         new_text += text[last_end:start]
-        emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
-        new_text += f'<tg-emoji emoji-id="{emoji_id}">{emoji_char}</tg-emoji>'
+
+        # If it's a country flag, keep it as-is (don't wrap with <tg-emoji>)
+        if is_country_flag(emoji_char):
+            new_text += emoji_char
+        else:
+            # Use specific ID if available, otherwise pick a random premium ID
+            emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
+            new_text += f'<tg-emoji emoji-id="{emoji_id}">{emoji_char}</tg-emoji>'
+
         last_end = end
 
     new_text += text[last_end:]
 
-    # 4. Restore protected HTML tags and code blocks
+    # Restore protected HTML tags and code blocks
     for placeholder, original in tag_placeholders.items():
         new_text = new_text.replace(placeholder, original)
     for i, block in enumerate(code_blocks):
@@ -4702,7 +4712,7 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     import asyncio, sys, traceback
 
-    # Ensure files exist (moved inside the while loop so we re-check after crashes)
+    # Ensure files exist
     for f in [USERS_FILE, KEYS_FILE, USED_FILE, BASIC_FILE, STANDARD_FILE, PREMIUM_FILE]:
         if not os.path.exists(f):
             with open(f, 'w') as _: pass
@@ -4711,12 +4721,9 @@ if __name__ == "__main__":
 
     while True:
         try:
-            # Get or create a fresh event loop
-            try:
-                loop = asyncio.get_event_loop()
-            except RuntimeError:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+            # ---------- ALWAYS CREATE A FRESH LOOP ----------
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
 
             print("=" * 50)
             print("  NF Bot - Final Ultimate Edition")
@@ -4729,7 +4736,7 @@ if __name__ == "__main__":
 
             app = ApplicationBuilder().token(TOKEN).build()
 
-            # --- all handlers (your existing code) ---
+            # ---------- Add all handlers (keep your existing code) ----------
             app.add_handler(CommandHandler("start", start))
             app.add_handler(CommandHandler("help", help_command))
             app.add_handler(CommandHandler("link", link_command))
@@ -4771,14 +4778,14 @@ if __name__ == "__main__":
 
             app.add_error_handler(error_handler)
 
-            # Safely cancel previous feedback task (if any)
+            # ---------- Cancel old feedback task safely ----------
             if feedback_task is not None:
                 try:
                     feedback_task.cancel()
                 except RuntimeError:
                     pass  # loop already closed, ignore
 
-            # Create background tasks (using the current loop)
+            # ---------- Start background tasks ----------
             feedback_task = loop.create_task(feedback_timeout_checker(app.bot))
             loop.create_task(feedback_broadcast_loop(app.bot))
             loop.create_task(periodic_proxy_check())
@@ -4797,5 +4804,6 @@ if __name__ == "__main__":
             print("Traceback:")
             traceback.print_exc()
             print("⏳ Restarting in 5 seconds...")
+            # The loop will be recreated in the next iteration
             time.sleep(5)
-            # Continue the while loop – it will recreate the event loop and app
+            continue

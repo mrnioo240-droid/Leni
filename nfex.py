@@ -144,21 +144,39 @@ ALL_PREMIUM_IDS = list(SPECIAL_EMOJI_IDS.values())
 def premium_emoji(text: str) -> str:
     if not text:
         return text
+
+    # Protect <code> blocks from being processed
     code_blocks = []
     def repl(match):
         code_blocks.append(match.group(0))
         return f"__CODE_{len(code_blocks)-1}__"
     text = re.sub(r'<code>.*?</code>', repl, text, flags=re.DOTALL)
+
+    # Escape HTML
     text = html_mod.escape(text)
+
+    # Find all emojis using the library (handles multi‑code‑point sequences)
+    emojis = emoji.emoji_list(text)
     new_text = ""
-    for char in text:
-        if emoji.is_emoji(char):
-            emoji_id = SPECIAL_EMOJI_IDS.get(char, random.choice(ALL_PREMIUM_IDS))
-            new_text += f'<tg-emoji emoji-id="{emoji_id}">{char}</tg-emoji>'
-        else:
-            new_text += char
+    last_end = 0
+
+    for e in emojis:
+        emoji_char = e['emoji']
+        start = e['start']
+        end = e['end']
+        # Append text between emojis
+        new_text += text[last_end:start]
+        # Get premium ID or pick random one
+        emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
+        new_text += f'<tg-emoji emoji-id="{emoji_id}">{emoji_char}</tg-emoji>'
+        last_end = end
+
+    new_text += text[last_end:]
+
+    # Restore <code> blocks
     for i, block in enumerate(code_blocks):
         new_text = new_text.replace(f"__CODE_{i}__", block)
+
     return new_text
 
 # ========== COUNTRY FLAGS & NAMES (180+) ==========
@@ -2497,10 +2515,10 @@ async def link_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         valid, info = await asyncio.to_thread(generator.verify_cookie, netflix_id)
         if valid:
-            name = info.get('accountOwnerName', 'Unknown')
-            email = info.get('email', 'Unknown')
-            plan = info.get('localizedPlanName', 'Unknown')
-            country = info.get('countryOfSignup', 'Unknown')
+            name = clean_text(info.get('accountOwnerName', 'Unknown'))
+            email = clean_text(info.get('email', 'Unknown'))
+            plan = clean_text(info.get('localizedPlanName', 'Unknown'))
+            country = clean_text(info.get('countryOfSignup', 'Unknown'))
             token = info.get('_token', 'N/A')
             if not token or token == 'N/A':
                 if 'nftoken=' in url:
@@ -4072,7 +4090,8 @@ async def process_feedback_photo(update: Update, context: ContextTypes.DEFAULT_T
     premium_caption = premium_emoji(caption_with_placeholder)
 
     # Build the actual clickable user link
-    user_link = f'<a href="tg://user?id={user.id}">{user.username or user.id}</a>'
+    display_name = f"@{user.username}" if user.username else str(user.id)
+    user_link = f'<a href="tg://user?id={user.id}">{display_name}</a>'
     final_caption = premium_caption.replace(placeholder, user_link)
 
     if FEEDBACK_CHANNEL:

@@ -33,7 +33,7 @@ except ImportError:
     def live(): pass
 
 # ========== CONFIGURATION ==========
-TOKEN = os.getenv("BOT_TOKEN", "8656224854:AAHmT_-IR5hIlaijF29_xH8-82feHUKypok")
+TOKEN = os.getenv("BOT_TOKEN", "7934975060:AAFUnh7ljkLE5CAjwj7jvYt3cW0CZT9Y7yM")
 if not TOKEN:
     raise ValueError("BOT_TOKEN environment variable not set!")
 
@@ -44,7 +44,7 @@ if not ADMIN_IDS:
 WATERMARK = "⚡ Made by @darkhuchannel"
 MAX_WORKERS = 15
 BATCH_SIZE = 5
-BATCH_DELAY = 0.5
+BATCH_DELAY = 0.7
 dot_length = 10
 PROXY_FILE = "proxy.txt"
 REQUEST_TIMEOUT = 30
@@ -68,6 +68,7 @@ REFERRAL_REWARD_HOURS = 24
 REFERRAL_REWARD_CHECK_QUOTA = 100
 REFERRAL_REWARD_GET_QUOTA = 1
 
+BOT_START_TIME = time.time()   # used for /ping uptime
 USERS_FILE = "users.json"
 KEYS_FILE = "keys.json"
 USED_FILE = "used_cookies.json"
@@ -76,13 +77,14 @@ STANDARD_FILE = "standard.txt"
 PREMIUM_FILE = "premium.txt"
 SPLIT_TEMP_DIR = "split_temp"
 
-REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@dxein"]
+REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@dxein", "@darkXbin"]
 CHANNEL_LINKS = {
     "@darkhuchannel": "https://t.me/darkhuchannel",
     "@Netflixbydark": "https://t.me/Netflixbydark",
     "@darkhuchannel_chat": "https://t.me/darkhuchannel_chat",
     "@public_cards": "https://t.me/public_cards",
-    "@dxein": "https://t.me/dxein"
+    "@dxein": "https://t.me/dxein",
+    "@darkXbin": "https://t.me/darkXbin"
 }
 FEEDBACK_CHANNEL = -1004430970211
 FEEDBACK_TIMEOUT_MINUTES = 5
@@ -93,7 +95,7 @@ feedback_broadcast_interval = 0
 
 
 START_VIDEO_PATH = os.getenv("START_VIDEO_PATH", "welcome.mp4")
-START_IMAGE_PATH = "/opt/render/project/src/welcome.jpg"
+START_IMAGE_PATH = os.getenv("START_IMAGE_PATH", "welcome.jpg")
 
 if os.path.exists(SPLIT_TEMP_DIR):
     shutil.rmtree(SPLIT_TEMP_DIR)
@@ -388,117 +390,6 @@ def format_member_since(value):
         return parsed.strftime("%B %Y")
     return cleaned
 
-# ========== RESTART PATTERNS (150+ in 25 languages) ==========
-RESTART_PATTERNS = [
-    r'restart your membership',
-    r'mulai lagi',
-    r'aktifkan kembali',
-    r'reanudar (?:tu|la) suscripción',
-    r'reinicie su suscripción',
-    r'redémarrer (?:votre|ton) abonnement',
-    r'renouveler (?:votre|ton) abonnement',
-    r'wieder aktivieren',
-    r'mitgliedschaft (?:wieder|neu) starten',
-    r'riavvia (?:il tuo|l\'abbonamento)',
-    r'reinizia (?:il tuo|l\'abbonamento)',
-    r'reiniciar (?:sua|a) assinatura',
-    r'reativar (?:sua|a) assinatura',
-    r'opnieuw starten (?:je|uw) abonnement',
-    r'hervat (?:je|uw) abonnement',
-    r'wznów (?:swoją|członkostwo)',
-    r'przywróć (?:swoją|członkostwo)',
-    r'yeniden başlat (?:üyeliğini|hesabını)',
-    r'tekrar (?:başlat|etkinleştir)',
-    r'возобновить (?:подписку|членство)',
-    r'перезапустить (?:подписку|членство)',
-    r'إعادة تشغيل العضوية',
-    r'استئناف العضوية',
-    r'सदस्यता पुनः आरंभ करें',
-    r'पुनः सक्रिय करें',
-    r'重新启动会员资格',
-    r'续订会员资格',
-    r'メンバーシップを再開',
-    r'再開する',
-    r'멤버십 다시 시작',
-    r'재시작',
-    r'starta om medlemskapet',
-    r'återaktivera',
-    r'start medlemskapet på nytt',
-    r'gjenoppta',
-    r'genstart medlemskab',
-    r'forny',
-    r'aloita jäsenyys uudelleen',
-    r'jatka',
-    r'επανεκκίνηση συνδρομής',
-    r'ενεργοποίηση ξανά',
-    r'เริ่มต้นใหม่',
-    r'เปิดใช้งานอีกครั้ง',
-    r'khởi động lại tư cách thành viên',
-    r'gia hạn',
-    r'reia abonamentul',
-    r'reactivează',
-    r'obnovit členství',
-    r'restartovat',
-    r'újraindítás',
-    r'újrakezdés',
-    r'перезапустити підписку',
-    r'відновити',
-    r'your account is on hold',
-    r'renew your membership',
-    r'reactivate your subscription',
-    r'reactivate your membership',
-    r'reactiver votre abonnement',
-    r'réactiver',
-    r'terminer votre inscription',
-    r'complete your registration',
-    r'finish signing up',
-    r'selesaikan pendaftaran',
-    r'pendaftaran',
-    r'khusus anggota baru',
-    r'join now',
-    r'start your free trial',
-    r'(?:subscription|account|membership) (?:has )?expired',
-    r'no active subscription',
-    r'not currently active',
-    r'this account is not active',
-    r'(?:subscription|account) (?:is )?(?:paused|suspended)',
-    r'abonnement expiré',
-    r'compte suspendu',
-    r'suscripción expirada',
-    r'cuenta suspendida',
-    r'assinatura expirada',
-    r'assinatura suspensa',
-    r'abonnement abgelaufen',
-    r'mitgliedschaft abgelaufen',
-    r'abbonamento scaduto',
-    r'abbonamento sospeso',
-    r'срок действия ист(?:ё|е)к',
-    r'подписка приостановлена',
-    r'aboneliğin süresi doldu',
-    r'berlangganan berakhir',
-    r'akun ditangguhkan',
-    r'انتهت العضوية',
-    r'عضوية معلقة',
-    r'subscription expired',
-    r'membership expired',
-    r'your plan has ended',
-    r'your subscription has ended',
-    r'your account is no longer active',
-    r'please reactivate',
-    r'renew now',
-    r'payment failed',
-    r'billing issue',
-    r'past due',
-    r'suspended',
-    r'account suspended',
-]
-
-def is_restart_page(html: str) -> bool:
-    html_lower = html.lower()
-    for pattern in RESTART_PATTERNS:
-        if re.search(pattern, html_lower):
-            return True
-    return False
 
 # ========== PROXY MANAGER ==========
 class ProxyManager:
@@ -626,6 +517,8 @@ pool_file_lock = asyncio.Lock()
 users_file_lock = threading.Lock()
 used_file_lock = threading.Lock()
 keys_file_lock = threading.Lock()
+
+BOT_START_TIME = time.time()   # used for /ping uptime
 
 async def cleanup_user(user_id: str):
     async with user_locks[user_id]:
@@ -1415,14 +1308,16 @@ def validate_cookie_tv(cookies, proxy=None):
             if r.status_code != 200:
                 return False, None, None
 
-            # --- Extract info first ---
+            # --- Extract account info (includes plan & price) ---
             info = generator.extract_account_info(r.text)
 
-            # --- Check restart patterns ONLY if plan is missing ---
+            # --- NEW LOGIC: reject if BOTH plan AND price are missing ---
             plan = info.get('localizedPlanName')
-            if (not plan or plan in ('N/A', 'Unknown', 'null', '')) and is_restart_page(r.text):
+            price = info.get('planPrice')
+            if (not plan or plan in ('N/A', 'Unknown', 'null', '')) and (not price or price in ('N/A', 'Unknown', 'null', '')):
                 return False, None, None
 
+            # --- Other validity checks (unchanged) ---
             if re.search(r'"membershipStatus"\s*:\s*"INACTIVE"', r.text, re.IGNORECASE):
                 return False, None, None
 
@@ -1834,6 +1729,7 @@ def clean_text(text):
         return 'N/A'
     try:
         text = html_mod.unescape(text)
+        text = text.replace('\\x40', '@')
         text = codecs.decode(text, 'unicode_escape')
         text = text.replace('\u00A0', ' ')
         text = ''.join(c for c in text if c != '\x00')
@@ -2035,23 +1931,15 @@ class NetflixTokenGenerator:
             profiles = re.findall(r'"displayName"\s*:\s*"([^"]+)"', html_content)
         info['profiles'] = ", ".join(profiles[:5]) if profiles else None
 
-        # ---- Only mark as restart if plan is missing ----
-        plan = info.get('localizedPlanName')
-        if not plan or plan in ('N/A', 'Unknown', 'null', ''):
-            if is_restart_page(html_content):
-                info['membershipStatus'] = 'INACTIVE'
-                info['holdStatus'] = 'Yes'
+        # ---- Restart‑pattern block REMOVED ----
+        # No longer sets membershipStatus or holdStatus based on keywords.
 
         return {k: v for k, v in info.items() if v not in (None, "", [], {})}
 
     def extract_account_info(self, html_content: str) -> Dict:
         graphql_info = extract_info_from_graphql_payload(html_content)
         if graphql_info and graphql_info.get('email') and graphql_info.get('countryOfSignup'):
-            # Only apply restart detection if plan is missing
-            plan = graphql_info.get('localizedPlanName')
-            if (not plan or plan in ('N/A', 'Unknown', 'null', '')) and is_restart_page(html_content):
-                graphql_info['membershipStatus'] = 'INACTIVE'
-                graphql_info['holdStatus'] = 'Yes'
+            # Restart‑pattern block REMOVED
             return graphql_info
 
         fallback_info = self._extract_account_info_fallback(html_content)
@@ -2059,11 +1947,7 @@ class NetflixTokenGenerator:
         for k, v in graphql_info.items():
             if v not in (None, "", [], {}):
                 merged[k] = v
-        # Re-apply restart condition (plan missing)
-        plan = merged.get('localizedPlanName')
-        if (not plan or plan in ('N/A', 'Unknown', 'null', '')) and is_restart_page(html_content):
-            merged['membershipStatus'] = 'INACTIVE'
-            merged['holdStatus'] = 'Yes'
+        # Restart‑pattern block REMOVED
         return merged
 
     def get_cookies_and_info(self, netflix_id: str, retries: int = 4, proxy: Optional[dict] = None) -> Tuple[Optional[Dict[str, str]], Dict]:
@@ -2120,9 +2004,13 @@ class NetflixTokenGenerator:
         if not cookies:
             return False, info
 
-        if not info.get('email') and not info.get('countryOfSignup') and not info.get('localizedPlanName'):
-            return False, {'reason': 'No account data found (inactive or invalid)'}
+        # ---- NEW: Reject if BOTH plan AND price are missing ----
+        plan = info.get('localizedPlanName')
+        price = info.get('planPrice')
+        if (not plan or plan in ('N/A', 'Unknown', 'null', '')) and (not price or price in ('N/A', 'Unknown', 'null', '')):
+            return False, {'reason': 'Plan and price missing – restart needed'}
 
+        # ---- Keep other safety checks ----
         if info.get('membershipStatus') and info['membershipStatus'].upper() == 'INACTIVE':
             return False, {'reason': 'Account inactive', 'membership_status': 'INACTIVE'}
 
@@ -2140,7 +2028,6 @@ class NetflixTokenGenerator:
                 return True, info
         else:
             return False, {'reason': f'Token generation failed: {err}', '_token_issue': err}
-
     def generate_nftoken(self, cookies: Dict[str, str], retries: int = 1) -> Optional[str]:
         token_data, _ = generate_nftoken(cookies)
         if token_data:
@@ -2447,6 +2334,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "\n\n😉 Select a service below"
     )
 
+    log.info(f"Image path: {os.path.abspath(START_IMAGE_PATH)}, exists: {os.path.exists(START_IMAGE_PATH)}")
     video_path = START_VIDEO_PATH
     if os.path.exists(video_path):
         try:
@@ -2553,6 +2441,18 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg += f"\n\n{WATERMARK}"
     await update.effective_message.reply_text(premium_emoji(msg), parse_mode='HTML')
 
+async def ping_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Show bot uptime since last start."""
+    elapsed = time.time() - BOT_START_TIME
+    days, rem = divmod(elapsed, 86400)
+    hours, rem = divmod(rem, 3600)
+    minutes, seconds = divmod(rem, 60)
+    uptime_str = f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
+    await update.effective_message.reply_text(
+        premium_emoji(f"🏓 Pong!\nBot has been running for: <b>{uptime_str}</b>"),
+        parse_mode='HTML'
+    )
+    
 async def link_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.effective_user:
         return
@@ -4154,18 +4054,26 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def process_feedback_photo(update: Update, context: ContextTypes.DEFAULT_TYPE, pending: Dict):
     user = update.effective_user
     user_id = str(user.id)
-    display = get_user_display(user_id, user.username)
 
-    caption = (
-        f"📸 **Netflix Feedback**\n"
-        f"──────────────────────────\n"
-        f"👤 User: {display}\n"
-        f"🆔 ID: `{user.id}`\n"
-        f"📋 Command: `{pending['type']}`\n"
-        f"📧 Email: `{pending.get('email', 'N/A')}`\n"
-        f"📦 Plan: `{pending.get('plan', 'N/A')}`\n"
-        f"🕒 Timestamp: `{datetime.fromtimestamp(pending['timestamp']).isoformat()}`"
+    # Placeholder for user link (will be inserted after premium_emoji conversion)
+    placeholder = "{{USER_LINK}}"
+    caption_with_placeholder = (
+        "📸 <b>Netflix Feedback</b>\n"
+        "──────────────────────────\n"
+        f"👤 User: {placeholder}\n"
+        f"🆔 ID: <code>{user.id}</code>\n"
+        f"📋 Command: <code>{pending['type']}</code>\n"
+        f"📧 Email: <code>{pending.get('email', 'N/A')}</code>\n"
+        f"📦 Plan: <code>{pending.get('plan', 'N/A')}</code>\n"
+        f"🕒 Timestamp: <code>{datetime.fromtimestamp(pending['timestamp']).isoformat()}</code>"
     )
+
+    # Convert emojis to premium (this escapes HTML, so the placeholder survives)
+    premium_caption = premium_emoji(caption_with_placeholder)
+
+    # Build the actual clickable user link
+    user_link = f'<a href="tg://user?id={user.id}">{user.username or user.id}</a>'
+    final_caption = premium_caption.replace(placeholder, user_link)
 
     if FEEDBACK_CHANNEL:
         try:
@@ -4173,8 +4081,8 @@ async def process_feedback_photo(update: Update, context: ContextTypes.DEFAULT_T
             await context.bot.send_photo(
                 chat_id=FEEDBACK_CHANNEL,
                 photo=photo_file,
-                caption=caption,
-                parse_mode='Markdown'
+                caption=final_caption,
+                parse_mode='HTML'
             )
             await update.message.reply_text("✅ Screenshot forwarded to @dark_feedbacks. Thank you!")
         except Exception as e:
@@ -4802,6 +4710,7 @@ if __name__ == "__main__":
             app.add_handler(CommandHandler("clearfb", clearfb_command))
             app.add_handler(CommandHandler("autoban", autoban_command))
             app.add_handler(CommandHandler("ufile", ufile_command))
+            app.add_handler(CommandHandler("ping", ping_command))
 
             app.add_handler(CallbackQueryHandler(mode_button, pattern="^mode_(check|clean|split|tvlogin)$"))
             app.add_handler(CallbackQueryHandler(confirm_check, pattern="^confirm_check$"))

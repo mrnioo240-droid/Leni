@@ -145,7 +145,7 @@ def premium_emoji(text: str) -> str:
     if not text:
         return text
 
-    # Protect <code> blocks from being processed
+    # Protect <code> blocks
     code_blocks = []
     def repl(match):
         code_blocks.append(match.group(0))
@@ -155,18 +155,26 @@ def premium_emoji(text: str) -> str:
     # Escape HTML
     text = html_mod.escape(text)
 
-    # Find all emojis using the library (handles multi‑code‑point sequences)
+    # Find emojis using the library
     emojis = emoji.emoji_list(text)
     new_text = ""
     last_end = 0
 
     for e in emojis:
-        emoji_char = e['emoji']
-        start = e['start']
-        end = e['end']
-        # Append text between emojis
+        # Try attribute access first (modern emoji library)
+        if hasattr(e, 'emoji'):
+            emoji_char = e.emoji
+            start = e.start
+            end = e.end
+        else:
+            # Fallback for dict-like objects
+            emoji_char = e.get('emoji') or e.get('emoji_char')
+            start = e.get('start') or e.get('match_start')
+            end = e.get('end') or e.get('match_end')
+            if not emoji_char:
+                continue
+
         new_text += text[last_end:start]
-        # Get premium ID or pick random one
         emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
         new_text += f'<tg-emoji emoji-id="{emoji_id}">{emoji_char}</tg-emoji>'
         last_end = end

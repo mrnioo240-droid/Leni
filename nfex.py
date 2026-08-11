@@ -139,6 +139,12 @@ SPECIAL_EMOJI_IDS = {
     "🔒": "5447453226498552490", "👑": "5447479640547428304", "❕": "5289930378885214069",
     "👻": "5447181973544008180",
 }
+def is_country_flag(emoji_char: str) -> bool:
+    """Check if a two‑character string is a country flag (two regional indicator symbols)."""
+    if len(emoji_char) != 2:
+        return False
+    cp1, cp2 = ord(emoji_char[0]), ord(emoji_char[1])
+    return (0x1F1E6 <= cp1 <= 0x1F1FF) and (0x1F1E6 <= cp2 <= 0x1F1FF)
 ALL_PREMIUM_IDS = list(SPECIAL_EMOJI_IDS.values())
 
 # Allowed Telegram HTML tags

@@ -33,7 +33,7 @@ except ImportError:
     def live(): pass
 
 # ========== CONFIGURATION ==========
-TOKEN = os.getenv("BOT_TOKEN", "7934975060:AAFUnh7ljkLE5CAjwj7jvYt3cW0CZT9Y7yM")
+TOKEN = os.getenv("BOT_TOKEN", "8656224854:AAHmT_-IR5hIlaijF29_xH8-82feHUKypok")
 if not TOKEN:
     raise ValueError("BOT_TOKEN environment variable not set!")
 

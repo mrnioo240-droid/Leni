@@ -139,116 +139,26 @@ SPECIAL_EMOJI_IDS = {
     "🔒": "5447453226498552490", "👑": "5447479640547428304", "❕": "5289930378885214069",
     "👻": "5447181973544008180",
 }
-def is_country_flag(emoji_char: str) -> bool:
-    """Check if a two‑character string is a country flag (two regional indicator symbols)."""
-    if len(emoji_char) != 2:
-        return False
-    cp1, cp2 = ord(emoji_char[0]), ord(emoji_char[1])
-    return (0x1F1E6 <= cp1 <= 0x1F1FF) and (0x1F1E6 <= cp2 <= 0x1F1FF)
 ALL_PREMIUM_IDS = list(SPECIAL_EMOJI_IDS.values())
-
-# Allowed Telegram HTML tags
-ALLOWED_TAGS = {'b', 'i', 'u', 's', 'code', 'pre', 'a', 'tg-emoji'}
 
 def premium_emoji(text: str) -> str:
     if not text:
         return text
-
-    # 1. Protect <code> blocks (they may contain other HTML, but treat as a unit)
     code_blocks = []
-    def protect_code(match):
+    def repl(match):
         code_blocks.append(match.group(0))
         return f"__CODE_{len(code_blocks)-1}__"
-    text = re.sub(r'<code>.*?</code>', protect_code, text, flags=re.DOTALL)
-
-    # 2. Protect only allowed tags (and their content for non-void tags)
-    # We'll use a placeholder for each allowed tag.
-    tag_placeholders = {}
-    def protect_allowed_tag(match):
-        full_tag = match.group(0)
-        # Extract tag name
-        tag_name_match = re.match(r'</?([a-zA-Z0-9_-]+)', full_tag)
-        if not tag_name_match:
-            return full_tag
-        tag_name = tag_name_match.group(1).lower()
-        if tag_name in ALLOWED_TAGS:
-            idx = len(tag_placeholders)
-            placeholder = f"__TAG_{idx}__"
-            tag_placeholders[placeholder] = full_tag
-            return placeholder
-        # If not allowed, leave it as is – it will be escaped by html_mod.escape
-        return full_tag
-
-    # Find all HTML tags and process them
-    # Note: This regex captures tags with attributes and self-closing tags
-    text = re.sub(r'<[^>]+>', protect_allowed_tag, text)
-
-    # 3. Escape the entire text (only allowed tags are protected; others become &lt;...&gt;)
+    text = re.sub(r'<code>.*?</code>', repl, text, flags=re.DOTALL)
     text = html_mod.escape(text)
-
-    # 4. Replace emojis with <tg-emoji> tags (using the same logic as before)
-    # We'll use the emoji library to detect all emojis
-    # Fallback to char iteration if emoji_list not available
-    try:
-        emojis = emoji.emoji_list(text)
-    except Exception:
-        emojis = []
-
     new_text = ""
-    last_end = 0
-
-    if emojis:
-        for e in emojis:
-            try:
-                if hasattr(e, 'emoji'):
-                    emoji_char = e.emoji
-                    start = e.start
-                    end = e.end
-                else:
-                    emoji_char = e.get('emoji') or e.get('emoji_char')
-                    start = e.get('start') or e.get('match_start')
-                    end = e.get('end') or e.get('match_end')
-                if not emoji_char:
-                    continue
-            except:
-                continue
-
-            new_text += text[last_end:start]
-            # Skip country flags (two regional indicators)
-            if is_country_flag(emoji_char):
-                new_text += emoji_char
-            else:
-                emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
-                new_text += f'<tg-emoji emoji-id="{emoji_id}">{emoji_char}</tg-emoji>'
-            last_end = end
-        new_text += text[last_end:]
-    else:
-        # Fallback: iterate character by character
-        i = 0
-        while i < len(text):
-            # Check for country flag (two regional indicators)
-            if i + 1 < len(text) and is_country_flag(text[i:i+2]):
-                new_text += text[i:i+2]
-                i += 2
-                continue
-            if emoji.is_emoji(text[i]):
-                emoji_char = text[i]
-                if is_country_flag(emoji_char):
-                    new_text += emoji_char
-                else:
-                    emoji_id = SPECIAL_EMOJI_IDS.get(emoji_char, random.choice(ALL_PREMIUM_IDS))
-                    new_text += f'<tg-emoji emoji-id="{emoji_id}">{emoji_char}</tg-emoji>'
-                i += 1
-            else:
-                new_text += text[i]
-                i += 1
-
-    # 5. Restore protected allowed tags and code blocks
-    for placeholder, original in tag_placeholders.items():
-        new_text = new_text.replace(placeholder, original)
+    for char in text:
+        if emoji.is_emoji(char):
+            emoji_id = SPECIAL_EMOJI_IDS.get(char, random.choice(ALL_PREMIUM_IDS))
+            new_text += f'<tg-emoji emoji-id="{emoji_id}">{char}</tg-emoji>'
+        else:
+            new_text += char
     for i, block in enumerate(code_blocks):
         new_text = new_text.replace(f"__CODE_{i}__", block)
-
     return new_text
 
 # ========== COUNTRY FLAGS & NAMES (180+) ==========

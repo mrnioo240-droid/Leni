@@ -42,7 +42,7 @@ if not ADMIN_IDS:
     ADMIN_IDS = [6725209689]
 
 WATERMARK = "⚡ Made by @Eyelifter"
-MAX_WORKERS = 20
+MAX_WORKERS = 15
 BATCH_SIZE = 5
 BATCH_DELAY = 0.7
 dot_length = 10

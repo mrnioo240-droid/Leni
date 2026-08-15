@@ -37,7 +37,7 @@ TOKEN = os.getenv("BOT_TOKEN", "8656224854:AAHmT_-IR5hIlaijF29_xH8-82feHUKypok")
 if not TOKEN:
     raise ValueError("BOT_TOKEN environment variable not set!")
 
-ADMIN_IDS = [int(id_) for id_ in os.getenv("ADMIN_IDS", "7246097389,6725209689,6426038286").split(",") if id_.strip()]
+ADMIN_IDS = [int(id_) for id_ in os.getenv("ADMIN_IDS", "7246097389,6725209689,7787501312,6426038286").split(",") if id_.strip()]
 if not ADMIN_IDS:
     ADMIN_IDS = [6725209689]
 

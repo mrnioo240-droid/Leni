@@ -2488,7 +2488,7 @@ async def link_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         from urllib.parse import urlparse
         parsed = urlparse(url)
-        if not parsed.hostname.endswith('.netflix.com'):
+        if parsed.hostname not in ("www.netflix.com", "netflix.com", "api.netflix.com"):
             await status_msg.edit_text(premium_emoji("❌ Only Netflix URLs are allowed."), parse_mode='HTML')
             return
 

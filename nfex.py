@@ -57,9 +57,9 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/125.0",
 ]
 PROXY_CHECK_INTERVAL = 30
-FREE_BASIC_LIMIT = 0
-FREE_STANDARD_LIMIT = 0
-FREE_PREMIUM_LIMIT = 0
+FREE_BASIC_LIMIT = 1
+FREE_STANDARD_LIMIT = 1
+FREE_PREMIUM_LIMIT = 1
 FREE_CHECK_LIMIT = 50
 MAX_COOKIES_PER_MASS_CHECK = 400
 MASS_CHECK_DAILY_COOKIE_LIMIT = 2000
@@ -77,7 +77,7 @@ STANDARD_FILE = "standard.txt"
 PREMIUM_FILE = "premium.txt"
 SPLIT_TEMP_DIR = "split_temp"
 
-REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@dxein", "@darkXbin", "@dark_feedbacks", "@Private_ccs", "@givewaychannel6"]
+REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@dxein", "@darkXbin", "@dark_feedbacks", "@batmanhu_channel", "@givewaychannel6"]
 CHANNEL_LINKS = {
     "@darkhuchannel": "https://t.me/darkhuchannel",
     "@Netflixbydark": "https://t.me/Netflixbydark",
@@ -86,7 +86,7 @@ CHANNEL_LINKS = {
     "@dxein": "https://t.me/dxein",
     "@darkXbin": "https://t.me/darkXbin",
     "@dark_feedbacks": "https://t.me/dark_feedbacks",
-    "@Private_ccs": "https://t.me/Private_ccs",
+    "@batmanhu_channel": "https://t.me/batmanhu_channel",
     "@givewaychannel6": "https://t.me/givewaychannel6"   
 }
 FEEDBACK_CHANNEL = -1004430970211

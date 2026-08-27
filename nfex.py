@@ -8,7 +8,7 @@
 # - Thread-safe all locks
 # - Split mode fixed (persistent temp dir)
 # - Memory & token cache pruned
-# - All admin commands
+# - All commands
 # - Fast batch processing
 # ============================================================
 

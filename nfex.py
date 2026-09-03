@@ -2,7 +2,7 @@
 # ============================================================
 # NF BOT – FINAL ULTIMATE EDITION (FULL)
 # - 180+ country flags
-# - 150+ restart patterns (25 languages)
+# - 150+restart patterns (25 languages)
 # - Full GraphQL + regex extraction
 # - iOS + Android NFToken with retries
 # - Thread-safe all locks

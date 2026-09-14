@@ -83,7 +83,7 @@ CHANNEL_LINKS = {
     "@Netflixbydark": "https://t.me/Netflixbydark",
     "@darkhuchannel_chat": "https://t.me/darkhuchannel_chat",
     "@public_cards": "https://t.me/public_cards",
-    "@darkXbin": "https://t.me/darkXbin",
+    "@apiLifter": "https://t.me/apiLifter",
     "@dark_feedbacks": "https://t.me/dark_feedbacks",
     "@batmanhu_channel": "https://t.me/batmanhu_channel",
     "@givewaychannel6": "https://t.me/givewaychannel6"   

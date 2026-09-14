@@ -77,7 +77,7 @@ STANDARD_FILE = "standard.txt"
 PREMIUM_FILE = "premium.txt"
 SPLIT_TEMP_DIR = "split_temp"
 
-REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@darkXbin", "@dark_feedbacks", "@batmanhu_channel", "@givewaychannel6"]
+REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@apiLifter", "@dark_feedbacks", "@batmanhu_channel", "@givewaychannel6"]
 CHANNEL_LINKS = {
     "@darkhuchannel": "https://t.me/darkhuchannel",
     "@Netflixbydark": "https://t.me/Netflixbydark",

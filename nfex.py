@@ -77,22 +77,21 @@ STANDARD_FILE = "standard.txt"
 PREMIUM_FILE = "premium.txt"
 SPLIT_TEMP_DIR = "split_temp"
 
-REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@public_cards", "@apiLifter", "@dark_feedbacks", "@batmanhu_channel", "@givewaychannel6"]
+REQUIRED_CHANNELS = ["@Netflixbydark", "@darkhuchannel_chat", "@darkhuchannel", "@apiLifter", "@dark_feedbacks", "@batmanvault", "@givewaychannel6"]
 CHANNEL_LINKS = {
     "@darkhuchannel": "https://t.me/darkhuchannel",
     "@Netflixbydark": "https://t.me/Netflixbydark",
-    "@darkhuchannel_chat": "https://t.me/darkhuchannel_chat",
-    "@public_cards": "https://t.me/public_cards",
+    "@darkhuchannel_chat": "https://t.me/darkhuchannel_chat", 
     "@apiLifter": "https://t.me/apiLifter",
     "@dark_feedbacks": "https://t.me/dark_feedbacks",
-    "@batmanhu_channel": "https://t.me/batmanhu_channel",
+    "@batmanvault": "https://t.me/batmanvault",
     "@givewaychannel6": "https://t.me/givewaychannel6"   
 }
 FEEDBACK_CHANNEL = -1004430970211
 FEEDBACK_TIMEOUT_MINUTES = 5
 POOL_CACHE_TTL = 60
 AUTOBAN_ENABLED = True
-AUTOBAN_TIMEOUT_MINUTES = 10
+AUTOBAN_TIMEOUT_MINUTES = 0
 feedback_broadcast_interval = 5
 
 
